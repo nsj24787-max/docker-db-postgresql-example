@@ -1,0 +1,27 @@
+services:
+  pg_hgf_dev:
+    image: postgres:16
+    container_name: pg_hgf_dev
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pg_hgf_dev_data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - net_hgf_dev
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+volumes:
+  pg_hgf_dev_data:
+
+networks:
+  net_hgf_dev:
+    driver: bridge
